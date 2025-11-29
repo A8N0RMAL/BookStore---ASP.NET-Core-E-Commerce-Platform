@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Book>
+
+@{
+    ViewData["Title"] = "Book Store";
+}
+
+<div class="container">
+    <h1>Book Store</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="get" class="d-flex">
+                <input type="text" name="search" class="form-control me-2" placeholder="Search books..." />
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="/Cart" class="btn btn-success">View Cart</a>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <strong>Filter by Category:</strong>
+        <a href="/Books" class="btn btn-sm btn-outline-secondary ms-2">All</a>
+        @foreach (var category in ViewBag.Categories)
+        {
+            <a href="/Books?category=@category" class="btn btn-sm btn-outline-primary ms-2">@category</a>
+        }
+    </div>
+
+    <div class="row">
+        @foreach (var book in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+
+                    @if (!string.IsNullOrEmpty(book.ImageUrl))
+                    {
+                        <img src="@book.ImageUrl" class="card-img-top" alt="@book.Title" style="height: 200px;">
+                    }
+
+                    <div class="card-body">
+                        <h5 class="card-title">@book.Title</h5>
+                        <p class="card-text"><strong>Author:</strong> @book.Author</p>
+                        <p class="card-text"><strong>Category:</strong> @book.Category</p>
+                        <p class="card-text"><strong>Price:</strong> $@book.Price</p>
+
+                        @if (!string.IsNullOrEmpty(book.Description))
+                        {
+                            <p class="card-text">@book.Description</p>
+                        }
+
+                        @if (book.StockQuantity > 0)
+                        {
+                            <form method="post" action="/Cart/Add">
+                                <input type="hidden" name="id" value="@book.Id" />
+                                <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary w-100" disabled>Out of Stock</button>
+                        }
+
+                        <a href="/Books/Details/@book.Id" class="btn btn-outline-secondary w-100 mt-2">View Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <h4>No books found</h4>
+            <p>Try changing your search or filter.</p>
+            <a href="/Books" class="btn btn-primary">View All Books</a>
+        </div>
+    }
+</div>

@@ -1,0 +1,77 @@
+﻿@model List<CartItem>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="container">
+    <h1>Shopping Cart</h1>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info">@TempData["Message"]</div>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-warning">
+            <h4>Your cart is empty</h4>
+            <p>Add some books to your cart first!</p>
+            <a href="/Books" class="btn btn-primary">Browse Books</a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Cart Items -->
+                @foreach (var item in Model)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" class="img-fluid" alt="@item.BookTitle">
+                                    }
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>@item.BookTitle</h5>
+                                    <p class="text-muted">Price: $@item.Price</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <form method="post" action="/Cart/Update">
+                                        <input type="hidden" name="id" value="@item.BookId" />
+                                        <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control" />
+                                        <button type="submit" class="btn btn-sm btn-outline-primary mt-1">Update</button>
+                                    </form>
+                                </div>
+                                <div class="col-md-2">
+                                    <form method="post" action="/Cart/Remove">
+                                        <input type="hidden" name="id" value="@item.BookId" />
+                                        <button type="submit" class="btn btn-danger">Remove</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Order Summary</h5>
+                        <hr>
+                        <p><strong>Items:</strong> @Model.Sum(item => item.Quantity)</p>
+                        <p><strong>Total:</strong> $@Model.Sum(item => item.Price * item.Quantity)</p>
+                        <a href="/Cart/Checkout" class="btn btn-success w-100">Proceed to Checkout</a>
+                        <a href="/Books" class="btn btn-outline-secondary w-100 mt-2">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

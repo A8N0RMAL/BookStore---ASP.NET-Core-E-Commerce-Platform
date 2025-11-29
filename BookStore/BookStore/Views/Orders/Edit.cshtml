@@ -1,0 +1,31 @@
+﻿@model Order
+
+@{
+    ViewData["Title"] = "Edit Order";
+}
+
+<div class="container">
+    <h1>Edit Order Status</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Order ID:</strong> @Model.Id</p>
+            <p><strong>Customer:</strong> @Model.CustomerName</p>
+            <p><strong>Total:</strong> $@Model.TotalAmount</p>
+
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        @foreach (var status in ViewBag.StatusOptions)
+                        {
+                            <option value="@status" selected="@(Model.Status == status)">@status</option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Status</button>
+                <a href="/Orders" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
